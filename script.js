@@ -1,6 +1,14 @@
 const DB_NAME='character-memo-db';
 const STORE_NAME='characters';
 const DB_VERSION=1;
+const DEMO_SEED_KEY='character-demo-seeded-v1';
+const DEMO_CHARACTERS=[
+  {id:'demo-001',name:'ネイビーさん',series:'ふしぎな住人',features:'静かでマイペース。どこか不思議な雰囲気をもつ。',imagePath:'assets/demo/character-001.png'},
+  {id:'demo-002',name:'ミント',series:'ふしぎな住人',features:'身軽で好奇心旺盛。気になるものを見つけるとすぐ近づく。',imagePath:'assets/demo/character-002.png'},
+  {id:'demo-003',name:'ルージュ',series:'ちいさな仲間',features:'元気いっぱい。小さいけれど存在感がある。',imagePath:'assets/demo/character-003.png'},
+  {id:'demo-004',name:'ピンクル',series:'ちいさな仲間',features:'のんびり屋でやさしい性格。',imagePath:'assets/demo/character-004.png'},
+  {id:'demo-005',name:'ライム',series:'森のなかま',features:'自然が好き。緑の場所にいると落ち着く。',imagePath:'assets/demo/character-005.png'}
+];
 
 let db;
 let characters=[];
@@ -45,6 +53,26 @@ function getAll(){return new Promise((resolve,reject)=>{const req=store().getAll
 function put(item){return new Promise((resolve,reject)=>{const req=store('readwrite').put(item);req.onsuccess=()=>resolve();req.onerror=()=>reject(req.error)})}
 function remove(id){return new Promise((resolve,reject)=>{const req=store('readwrite').delete(id);req.onsuccess=()=>resolve();req.onerror=()=>reject(req.error)})}
 
+async function seedDemoCharacters(){
+  if(localStorage.getItem(DEMO_SEED_KEY)) return;
+  const existing=await getAll();
+  const existingIds=new Set(existing.map(c=>c.id));
+  const baseTime=Date.now()-DEMO_CHARACTERS.length*1000;
+  for(let i=0;i<DEMO_CHARACTERS.length;i++){
+    const d=DEMO_CHARACTERS[i];
+    if(existingIds.has(d.id)) continue;
+    try{
+      const res=await fetch(d.imagePath);
+      if(!res.ok) throw new Error('demo image load failed');
+      const imageBlob=await res.blob();
+      await put({id:d.id,name:d.name,series:d.series,features:d.features,imageBlob,createdAt:baseTime+i,updatedAt:baseTime+i});
+    }catch(err){
+      console.warn('Demo character could not be loaded',d.id,err);
+    }
+  }
+  localStorage.setItem(DEMO_SEED_KEY,'1');
+}
+
 function clearObjectUrls(){objectUrls.forEach(URL.revokeObjectURL);objectUrls=[]}
 function imageUrl(blob){
   if(!blob)return null;
@@ -58,7 +86,7 @@ function escapeHtml(value=''){
 function filteredCharacters(){
   const q=searchInput.value.trim().toLowerCase();
   if(!q)return characters;
-  return characters.filter(c=>(c.name||'').toLowerCase().includes(q)||(c.features||'').toLowerCase().includes(q));
+  return characters.filter(c=>(c.name||'').toLowerCase().includes(q)||(c.series||'').toLowerCase().includes(q)||(c.features||'').toLowerCase().includes(q));
 }
 function render(){
   clearObjectUrls();
@@ -71,6 +99,7 @@ function render(){
           ${url?`<img src="${url}" alt="">`:'<div class="no-image">✎</div>'}
         </div>
         <div class="card-body">
+          ${c.series?`<span class="card-series">${escapeHtml(c.series)}</span>`:''}
           <h3 class="card-name">${escapeHtml(c.name||'名前なし')}</h3>
           <p class="card-features">${escapeHtml(c.features||'まだ特徴メモはありません')}</p>
         </div>
@@ -107,6 +136,9 @@ function openDetail(id){
   if(!c)return;
   viewingId=id;
   $('detailName').textContent=c.name||'名前なし';
+  const seriesEl=$('detailSeries');
+  seriesEl.textContent=c.series||'';
+  seriesEl.hidden=!c.series;
   $('detailFeatures').textContent=c.features||'まだ特徴メモはありません。';
   const img=$('detailImage');
   const noImg=$('detailNoImage');
@@ -211,6 +243,7 @@ form.addEventListener('submit',async e=>{
     id:editingId||crypto.randomUUID(),
     name,
     features:featuresInput.value.trim(),
+    series:current?.series||'',
     imageBlob,
     createdAt:current?.createdAt||now,
     updatedAt:now
@@ -229,6 +262,7 @@ window.addEventListener('beforeunload',clearObjectUrls);
 (async function init(){
   try{
     db=await openDb();
+    await seedDemoCharacters();
     await refresh();
   }catch(err){
     console.error(err);
