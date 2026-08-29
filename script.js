@@ -1,13 +1,13 @@
 const DB_NAME='character-memo-db';
 const STORE_NAME='characters';
 const DB_VERSION=1;
-const DEMO_SEED_KEY='character-demo-seeded-v1';
+const DEMO_SEED_KEY='character-demo-seeded-v2';
 const DEMO_CHARACTERS=[
-  {id:'demo-001',name:'ネイビーさん',series:'ふしぎな住人',features:'静かでマイペース。どこか不思議な雰囲気をもつ。',imagePath:'assets/demo/character-001.png'},
-  {id:'demo-002',name:'ミント',series:'ふしぎな住人',features:'身軽で好奇心旺盛。気になるものを見つけるとすぐ近づく。',imagePath:'assets/demo/character-002.png'},
-  {id:'demo-003',name:'ルージュ',series:'ちいさな仲間',features:'元気いっぱい。小さいけれど存在感がある。',imagePath:'assets/demo/character-003.png'},
-  {id:'demo-004',name:'ピンクル',series:'ちいさな仲間',features:'のんびり屋でやさしい性格。',imagePath:'assets/demo/character-004.png'},
-  {id:'demo-005',name:'ライム',series:'森のなかま',features:'自然が好き。緑の場所にいると落ち着く。',imagePath:'assets/demo/character-005.png'}
+  {id:'demo-001',name:'001',series:'36色妖怪',features:'',imagePath:'assets/demo/character-001.png'},
+  {id:'demo-002',name:'002',series:'36色妖怪',features:'',imagePath:'assets/demo/character-002.png'},
+  {id:'demo-003',name:'003',series:'36色妖怪',features:'',imagePath:'assets/demo/character-003.png'},
+  {id:'demo-004',name:'004',series:'36色妖怪',features:'',imagePath:'assets/demo/character-004.png'},
+  {id:'demo-005',name:'005',series:'36色妖怪',features:'',imagePath:'assets/demo/character-005.png'}
 ];
 
 let db;
@@ -60,7 +60,6 @@ async function seedDemoCharacters(){
   const baseTime=Date.now()-DEMO_CHARACTERS.length*1000;
   for(let i=0;i<DEMO_CHARACTERS.length;i++){
     const d=DEMO_CHARACTERS[i];
-    if(existingIds.has(d.id)) continue;
     try{
       const res=await fetch(d.imagePath);
       if(!res.ok) throw new Error('demo image load failed');
