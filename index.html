@@ -14,7 +14,7 @@
         <p class="eyebrow">ORIGINAL CHARACTER NOTE</p>
         <h1>キャラメモ</h1>
       </div>
-      <button id="addBtn" class="btn btn-primary">＋ キャラを追加</button>
+      <button id="addBtn" class="btn btn-primary">＋ キャラをつくる</button>
     </header>
 
     <section class="toolbar">
@@ -29,18 +29,52 @@
       <section id="emptyState" class="empty">
         <div class="empty-mark">✦</div>
         <h2>最初のキャラを残そう</h2>
-        <p>画像と名前、特徴だけで気軽にカードを作れます。</p>
-        <button id="emptyAddBtn" class="btn btn-primary">＋ キャラを追加</button>
+        <p>まずは画像と名前だけでもOK。設定はあとから足せます。</p>
+        <button id="emptyAddBtn" class="btn btn-primary">＋ キャラをつくる</button>
+      </section>
+      <section id="noResults" class="no-results" hidden>
+        <p>見つかりませんでした。</p>
       </section>
       <section id="cardGrid" class="card-grid" aria-live="polite"></section>
     </main>
   </div>
 
-  <dialog id="editorDialog" class="dialog">
-    <form id="editorForm" method="dialog">
+  <dialog id="detailDialog" class="dialog detail-dialog">
+    <div class="dialog-shell">
       <div class="dialog-head">
         <div>
           <p class="eyebrow">CHARACTER CARD</p>
+          <h2 id="detailName">キャラ名</h2>
+        </div>
+        <button type="button" id="detailCloseBtn" class="icon-btn" aria-label="閉じる">×</button>
+      </div>
+
+      <div class="detail-layout">
+        <div class="detail-image-wrap">
+          <img id="detailImage" alt="" hidden>
+          <div id="detailNoImage" class="detail-no-image">✎</div>
+        </div>
+        <div class="detail-copy">
+          <div class="detail-section">
+            <p class="detail-label">特徴メモ</p>
+            <p id="detailFeatures" class="detail-features"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="dialog-actions">
+        <button type="button" id="detailDeleteBtn" class="btn btn-danger">削除</button>
+        <div class="spacer"></div>
+        <button type="button" id="editBtn" class="btn btn-primary">✎ 編集する</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="editorDialog" class="dialog">
+    <form id="editorForm">
+      <div class="dialog-head">
+        <div>
+          <p class="eyebrow">EDIT CHARACTER</p>
           <h2 id="dialogTitle">キャラを追加</h2>
         </div>
         <button type="button" id="closeBtn" class="icon-btn" aria-label="閉じる">×</button>
@@ -53,7 +87,7 @@
             <div id="imagePlaceholder">
               <span class="camera">＋</span>
               <strong>画像を選ぶ</strong>
-              <small>写真・スクリーンショットなど</small>
+              <small>写真・スクリーンショット・Procreateの画像など</small>
             </div>
           </label>
           <input id="imageInput" type="file" accept="image/*" hidden>
@@ -62,21 +96,20 @@
 
         <div class="fields">
           <label>
-            <span>名前</span>
+            <span>名前 <b class="required">必須</b></span>
             <input id="nameInput" type="text" maxlength="40" placeholder="キャラの名前" required>
           </label>
           <label>
-            <span>特徴</span>
-            <textarea id="featuresInput" rows="8" maxlength="1200" placeholder="性格、見た目、口ぐせ、好きなもの、設定など自由にメモ"></textarea>
+            <span>特徴メモ</span>
+            <textarea id="featuresInput" rows="8" maxlength="1200" placeholder="性格、好きなもの、口ぐせ、能力、設定など。短いメモでもOK"></textarea>
           </label>
         </div>
       </div>
 
       <div class="dialog-actions">
-        <button type="button" id="deleteBtn" class="btn btn-danger" hidden>削除</button>
-        <div class="spacer"></div>
         <button type="button" id="cancelBtn" class="btn btn-secondary">キャンセル</button>
-        <button type="submit" class="btn btn-primary">保存</button>
+        <div class="spacer"></div>
+        <button type="submit" class="btn btn-primary">保存する</button>
       </div>
     </form>
   </dialog>
