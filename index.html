@@ -20,7 +20,7 @@
     <section class="toolbar">
       <label class="search">
         <span aria-hidden="true">⌕</span>
-        <input id="searchInput" type="search" placeholder="名前や特徴で検索">
+        <input id="searchInput" type="search" placeholder="名前・シリーズ・特徴で検索">
       </label>
       <span id="countLabel" class="count">0キャラ</span>
     </section>
@@ -45,6 +45,7 @@
         <div>
           <p class="eyebrow">CHARACTER CARD</p>
           <h2 id="detailName">キャラ名</h2>
+          <span id="detailSeries" class="series-chip" hidden></span>
         </div>
         <button type="button" id="detailCloseBtn" class="icon-btn" aria-label="閉じる">×</button>
       </div>
